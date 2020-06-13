@@ -53,7 +53,7 @@ def pin(pin_socket, pusher_cache, kvs, status, function_cache, runtimes,
     # Add metadata tracking for the newly pinned functions.
     runtimes[name] = []
     exec_counts[name] = 0
-    logging.info('Adding function %s to my local pinned functions.' % (name))
+    print('Adding function %s to my local pinned functions.' % (name))
 
     if pin_msg.batching and len(status.functions) > 1:
         raise RuntimeError('There is more than one pinned function (we are'
@@ -70,11 +70,11 @@ def pin(pin_socket, pusher_cache, kvs, status, function_cache, runtimes,
 def unpin(unpin_socket, status, function_cache, runtimes, exec_counts):
     name = unpin_socket.recv_string()
     if name not in function_cache:
-        logging.info('Received an unpin request for an unknown function: %s.' %
+        print('Received an unpin request for an unknown function: %s.' %
                      (name))
         return
 
-    logging.info('Removing function %s from my local pinned functions.' %
+    print('Removing function %s from my local pinned functions.' %
                  (name))
 
     # We restart the container after unpinning the function in order to clear

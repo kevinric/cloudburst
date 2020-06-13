@@ -52,7 +52,7 @@ def exec_function(exec_socket, kvs, user_library, cache, function_cache):
         f = utils.retrieve_function(call.name, kvs, user_library, call.consistency)
 
     if not f:
-        logging.info('Function %s not found! Returning an error.' %
+        print('Function %s not found! Returning an error.' %
                      (call.name))
         sutils.error.error = FUNC_NOT_FOUND
         result = ('ERROR', sutils.error.SerializeToString())
@@ -61,7 +61,7 @@ def exec_function(exec_socket, kvs, user_library, cache, function_cache):
         try:
             if call.consistency == NORMAL:
                 result = _exec_func_normal(kvs, f, fargs, user_library, cache)
-                logging.info('Finished executing %s: %s!' % (call.name,
+                print('Finished executing %s: %s!' % (call.name,
                                                              str(result)))
             else:
                 dependencies = {}
@@ -82,7 +82,7 @@ def exec_function(exec_socket, kvs, user_library, cache, function_cache):
         succeed = kvs.causal_put(call.response_key, result)
 
     if not succeed:
-        logging.info(f'Unsuccessful attempt to put key {call.response_key} '
+        print(f'Unsuccessful attempt to put key {call.response_key} '
                      + 'into the KVS.')
 
 
@@ -343,14 +343,14 @@ def _exec_dag_function_normal(pusher_cache, kvs, trigger_sets, function,
                 cont.id = schedule.id
                 cont.result = serializer.dump(result)
 
-                logging.info('Sending continuation to scheduler for DAG %s.' %
+                print('Sending continuation to scheduler for DAG %s.' %
                              (schedule.id))
                 sckt = pusher_cache.get(utils.get_continuation_address(schedulers))
                 sckt.send(cont.SerializeToString())
         elif schedule.response_address:
             for schedule, result in zip(schedules, result_list):
                 sckt = pusher_cache.get(schedule.response_address)
-                logging.info('DAG %s (ID %s) result returned to requester.' %
+                print('DAG %s (ID %s) result returned to requester.' %
                              (schedule.dag.name, trigger.id))
                 sckt.send(serializer.dump(result))
         else:
@@ -360,7 +360,7 @@ def _exec_dag_function_normal(pusher_cache, kvs, trigger_sets, function,
                 lattice = serializer.dump_lattice(result)
                 output_key = schedule.output_key if schedule.output_key \
                     else schedule.id
-                logging.info('DAG %s (ID %s) result in KVS at %s.' %
+                print('DAG %s (ID %s) result in KVS at %s.' %
                              (schedule.dag.name, schedule.id, output_key))
 
                 keys.append(output_key)
@@ -446,7 +446,7 @@ def _exec_dag_function_causal(pusher_cache, kvs, triggers, function, schedule,
             sckt.send(new_trigger.SerializeToString())
 
     if is_sink:
-        logging.info('DAG %s (ID %s) completed in causal mode; result at %s.' %
+        print('DAG %s (ID %s) completed in causal mode; result at %s.' %
                      (schedule.dag.name, schedule.id, schedule.output_key))
 
         vector_clock = {}

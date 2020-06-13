@@ -82,7 +82,7 @@ class AnnaIpcClient(BaseAnnaClient):
         try:
             msg = self.get_response_socket.recv()
         except zmq.ZMQError as e:
-            logging.error("Unexpected error while requesting keys %s: %s." %
+            print("Unexpected error while requesting keys %s: %s." %
                           (str(keys), str(e)))
 
             return kv_pairs
@@ -124,7 +124,7 @@ class AnnaIpcClient(BaseAnnaClient):
         try:
             msg = self.get_response_socket.recv()
         except zmq.ZMQError as e:
-            logging.error("Unexpected error while requesting keys %s: %s." %
+            print("Unexpected error while requesting keys %s: %s." %
                           (str(keys), str(e)))
 
             return ((None, None), kv_pairs)
@@ -174,9 +174,9 @@ class AnnaIpcClient(BaseAnnaClient):
                 msg = self.put_response_socket.recv()
             except zmq.ZMQError as e:
                 if e.errno == zmq.EAGAIN:
-                    logging.error("Request for %s timed out!" % (str(key)))
+                    print("Request for %s timed out!" % (str(key)))
                 else:
-                    logging.error("Unexpected ZMQ error: %s." % (str(e)))
+                    print("Unexpected ZMQ error: %s." % (str(e)))
 
                 return result
             else:
@@ -207,9 +207,9 @@ class AnnaIpcClient(BaseAnnaClient):
             self.put_response_socket.recv()
         except zmq.ZMQError as e:
             if e.errno == zmq.EAGAIN:
-                logging.error("Request for %s timed out!" % (str(key)))
+                print("Request for %s timed out!" % (str(key)))
             else:
-                logging.error("Unexpected ZMQ error: %s." % (str(e)))
+                print("Unexpected ZMQ error: %s." % (str(e)))
 
             return False
         else:
