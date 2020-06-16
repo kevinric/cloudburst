@@ -38,7 +38,7 @@ def create_function(func_create_socket, kvs, consistency=NORMAL):
     func.ParseFromString(func_create_socket.recv())
 
     name = sutils.get_func_kvs_name(func.name)
-    print('Creating function %s.' % (name))
+    logging.info('Creating function %s.' % (name))
 
     if consistency == NORMAL:
         body = LWWPairLattice(sutils.generate_timestamp(0), func.body)
@@ -69,7 +69,7 @@ def create_dag(dag_create_socket, pusher_cache, kvs, dags, policy,
         dag_create_socket.send(sutils.error.SerializeToString())
         return
 
-    print('Creating DAG %s.' % (dag.name))
+    logging.info('Creating DAG %s.' % (dag.name))
 
     # We persist the DAG in the KVS, so other schedulers can read the DAG when
     # they hear about it.
@@ -88,7 +88,7 @@ def create_dag(dag_create_socket, pusher_cache, kvs, dags, policy,
             # The policy engine will only return False if it ran out of
             # resources on which to attempt to pin this function.
             if not success:
-                print(f'Creating DAG {dag.name} failed due to ' +
+                logging.info(f'Creating DAG {dag.name} failed due to ' +
                              'insufficient resources.')
                 sutils.error.error = NO_RESOURCES
                 dag_create_socket.send(sutils.error.SerializeToString())
@@ -130,4 +130,4 @@ def delete_dag(dag_delete_socket, dags, policy, call_frequency):
 
     del dags[dag_name]
     dag_delete_socket.send(sutils.ok_resp)
-    print('DAG %s deleted.' % (dag_name))
+    logging.info('DAG %s deleted.' % (dag_name))

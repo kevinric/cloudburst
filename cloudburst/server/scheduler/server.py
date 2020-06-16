@@ -313,7 +313,7 @@ def scheduler(ip, mgmt_ip, route_addr, policy_type):
                 fstats = stats.functions.add()
                 fstats.name = fname
                 fstats.call_count = call_frequency[fname]
-                print('Reporting %d calls for function %s.' %
+                logging.info('Reporting %d calls for function %s.' %
                              (call_frequency[fname], fname))
 
                 call_frequency[fname] = 0

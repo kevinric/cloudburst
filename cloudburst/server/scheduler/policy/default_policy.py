@@ -192,7 +192,7 @@ class DefaultCloudburstSchedulerPolicy(BaseCloudburstSchedulerPolicy):
             self.unpinned_cpu_executors.discard(max_ip)
 
         if not max_ip:
-            print('No available executors.')
+            logging.error('No available executors.')
 
         return max_ip
 
@@ -275,7 +275,7 @@ class DefaultCloudburstSchedulerPolicy(BaseCloudburstSchedulerPolicy):
             try:
                 response.ParseFromString(self.pin_accept_socket.recv())
             except zmq.ZMQError:
-                print('Pin operation to %s:%d timed out. Retrying.' %
+                logging.error('Pin operation to %s:%d timed out. Retrying.' %
                               (node, tid))
                 continue
 
@@ -299,7 +299,7 @@ class DefaultCloudburstSchedulerPolicy(BaseCloudburstSchedulerPolicy):
                 return True
             else:
                 # The pin operation was rejected, remove node and try again.
-                print('Node %s:%d rejected pin for %s. Retrying.'
+                logging.error('Node %s:%d rejected pin for %s. Retrying.'
                               % (node, tid, function_ref.name))
 
                 continue
@@ -342,7 +342,7 @@ class DefaultCloudburstSchedulerPolicy(BaseCloudburstSchedulerPolicy):
 
     def process_status(self, status):
         key = (status.ip, status.tid)
-        print('Received status update from executor %s:%d.' %
+        logging.info('Received status update from executor %s:%d.' %
                      (key[0], int(key[1])))
 
         # This means that this node is currently departing, so we remove it

@@ -215,7 +215,7 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
                 schedule.ParseFromString(msg)
                 fname = schedule.target_function
 
-                print('Received a schedule for DAG %s (%s), function %s.' %
+                logging.info('Received a schedule for DAG %s (%s), function %s.' %
                              (schedule.dag.name, schedule.id, fname))
 
                 if fname not in queue:
@@ -243,7 +243,7 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
                     triggers = list(received_triggers[trkey].values())
 
                     if fname not in function_cache:
-                        print('%s not in function cache', fname)
+                        logging.error('%s not in function cache', fname)
                         utils.generate_error_response(schedule, client, fname)
                         continue
 
@@ -303,7 +303,7 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
                     continue
 
                 fname = trigger.target_function
-                print('Received a trigger for schedule %s, function %s.' %
+                logging.info('Received a trigger for schedule %s, function %s.' %
                              (trigger.id, fname))
 
                 key = (trigger.id, fname)
@@ -347,7 +347,7 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
                         triggers = list(received_triggers[key].values())
 
                     if fname not in function_cache:
-                        print('%s not in function cache', fname)
+                        logging.error('%s not in function cache', fname)
                         utils.generate_error_response(schedule, client, fname)
                         continue
 
@@ -392,7 +392,7 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
             # This message does not matter.
             self_depart_socket.recv()
 
-            print('Preparing to depart. No longer accepting requests ' +
+            logging.info('Preparing to depart. No longer accepting requests ' +
                          'and clearing all queues.')
 
             status.ClearField('functions')
@@ -416,11 +416,11 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
             # set.
             utils.push_status(schedulers, pusher_cache, status)
 
-            print('Total thread occupancy: %.6f' % (utilization))
+            logging.info('Total thread occupancy: %.6f' % (utilization))
 
             for event in event_occupancy:
                 occ = event_occupancy[event] / (report_end - report_start)
-                print('\tEvent %s occupancy: %.6f' % (event, occ))
+                logging.info('\tEvent %s occupancy: %.6f' % (event, occ))
                 event_occupancy[event] = 0.0
 
             stats = ExecutorStatistics()
@@ -453,7 +453,7 @@ def executor(ip, mgmt_ip, schedulers, thread_id):
                 sckt = pusher_cache.get(utils.get_util_report_address(mgmt_ip))
                 sckt.send(status.SerializeToString())
             else:
-                print(stats)
+                logging.info(stats)
 
             status.ClearField('utilization')
             report_start = time.time()
